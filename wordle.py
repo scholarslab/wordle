@@ -4,7 +4,7 @@ dic = ["aahed", "aalii", "aargh", "aarti", "abaca", "abaci", "abacs", "abaft", "
 letters = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']
 
 # How much is a Yellow worth relative to Greens?
-YELLOW_FACTOR = 0.5
+YELLOW_FACTOR = 1
 
 # We're going to use itertools to automatically generate unique combinations of 2 words from the dictionary
 import itertools
@@ -119,4 +119,4 @@ for word2 in dic:
         best[2] = word2
         print(bestfreq2,word2)
 print("Best guesses: ",best)
-# This code should result in: ['saine', 'corey', 'brast']
+# This code should result in: ['brane', 'soily', 'caret']
