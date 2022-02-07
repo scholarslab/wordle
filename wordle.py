@@ -3,8 +3,9 @@ dic = ["aahed", "aalii", "aargh", "aarti", "abaca", "abaci", "abacs", "abaft", "
 
 letters = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']
 
-# How much is a Yellow worth relative to Greens?
-YELLOW_FACTOR = 1
+# How much is a Yellow/Grey worth relative to Greens?
+# 
+YELLOW_FACTOR = 2
 
 # We're going to use itertools to automatically generate unique combinations of 2 words from the dictionary
 import itertools
@@ -64,7 +65,7 @@ for l in yellows:
 
 # The logic for determining the value of a guess
 # 'givens' is the list of prior guesses
-def value(word, freqG, freqY, givens=[]):
+def value(word, freqG, freqY, yFactor=YELLOW_FACTOR, givens=[]):
     # Count up the number of greens expected
     greens = 0.0
     for i in range(5):
@@ -81,8 +82,8 @@ def value(word, freqG, freqY, givens=[]):
         # ... not already guessed
         if l not in ''.join(givens):
             yellows += freqY[l]
-    # Remember to multiply by the Yellow Factor
-    return greens + yellows*YELLOW_FACTOR
+    # Multiply by the Yellow Factor
+    return greens + yellows*yFactor
 
 # for word in dic:
 #     if freq(word,freqG,freqY)>bestfreq:
@@ -96,7 +97,7 @@ bestfreq = 0.0
 # We can use itertools to generate all the combinations of 2 words from the dictionary
 # Then we'll check the total score for each combination
 for word0,word1 in tuple(itertools.combinations(dic,2)):
-    f = value(word0,freqG,freqY) + value(word1,freqG,freqY,[word0])
+    f = value(word0,freqG,freqY) + value(word1,freqG,freqY,YELLOW_FACTOR,[word0])
     # Record the guess when if we have a new best guess
     if f > bestfreq:
         bestfreq = f
@@ -108,15 +109,20 @@ for word0,word1 in tuple(itertools.combinations(dic,2)):
         # Print a running list of best matches
         print(bestfreq, best)
 
-# Now let's figure out what the best third word is, in case we strike out with the first two
-bestfreq2 = 0.0
+# Now let's figure out what the next guesses should be, in case we keep striking out
+# We might also want to bump up the Yellow Factor since we're getting more and more desperate for yellows as we run out of guesses 
+bestfreq = 0.0
 best.append("")
-for word2 in dic:
-    # we can pass in the first two words we already found as givens
-    f = value(word2,freqG,freqY,[best[0],best[1]])
-    if f > bestfreq2:
-        bestfreq2 = f
-        best[2] = word2
-        print(bestfreq2,word2)
-print("Best guesses: ",best)
-# This code should result in: ['brane', 'soily', 'caret']
+for i in range(1,5):
+    for word in dic:
+        # Pass in the best words list as givens
+        f = value(word,freqG,freqY,YELLOW_FACTOR+i, best[0:-1])
+        if f > bestfreq:
+            bestfreq = f
+            best[-1] = word
+    print(bestfreq,best[-1])
+    bestfreq = 0.0
+    best.append("")
+
+print("Best guesses: ",best[0:-1])
+# This code should result in: ['soare', 'clint', 'gaumy', 'preed', 'belah', 'furol']
