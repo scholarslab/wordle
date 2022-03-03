@@ -99,14 +99,10 @@ bestfreq = 0.0
 # The strategy here assumes that we'll probably have to blindly guess at least twice
 # We can use itertools to generate all the combinations of 2 words from the dictionary
 # Then we'll check the total score for each combination
-for word0,word1 in tuple(itertools.combinations(dic,2)):
-    f = value(word0,freqG,freqY) + value(word1,freqG,freqY,YELLOW_FACTOR,[word0])
+for word0,word1,word2 in tuple(itertools.combinations(dic[:500],3)):
+    f = value(word0,freqG,freqY) + value(word1,freqG,freqY,YELLOW_FACTOR,[word0]) + value(word2,freqG,freqY,YELLOW_FACTOR,[word0,word1])
     # Figure out which word is better to guess first
-    if value(word0,freqG,freqY) > value(word1,freqG,freqY):
-        candidate = [word0,word1]
-    else:
-        candidate = [word1,word0]
-    bests.append((f,candidate))
+    bests.append((f,[word0,word1,word2]))
     # Record the guess when if we have a new best guess
     if f > bestfreq:
         bestfreq = f
